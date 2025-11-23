@@ -335,7 +335,7 @@ fn main() -> Result<()> {
         };
 
         match &command {
-            Commands::Browse { filter_args, .. } => {
+            Commands::Browse { filter_args, output_file, .. } => {
                 let search_params = command.get_search_params_from_browse();
                 let execute_cmd = command.get_execute_from_browse();
                 let preview_overrides = command.get_preview_overrides_from_browse();
@@ -345,7 +345,7 @@ fn main() -> Result<()> {
                     .as_ref()
                     .map(|name| (name.as_str(), filter_args.filter_desc.as_deref()));
 
-                commands::browse(
+                commands::browse::execute(
                     &db,
                     search_params,
                     filter_args.filter.as_deref(),
@@ -354,6 +354,7 @@ fn main() -> Result<()> {
                     preview_overrides,
                     path_format,
                     quiet,
+                    output_file.clone(),
                 )?;
             }
             Commands::Tag { .. } => {

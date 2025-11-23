@@ -179,7 +179,7 @@ impl<I> PathFilterExt for I where I: IntoIterator<Item = PathBuf> {}
 /// Extension trait for filtering `PathBuf` collections with database tag access
 ///
 /// This trait adds tag-based filtering that requires database access.
-/// Scoped to Vec<PathBuf> since tag exclusion needs efficient random access.
+/// Scoped to `Vec<PathBuf>` since tag exclusion needs efficient random access.
 pub trait PathTagFilterExt {
     /// Exclude files that have any of the specified tags
     ///

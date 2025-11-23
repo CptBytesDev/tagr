@@ -14,6 +14,8 @@ use crate::{
     output,
     ui::skim_adapter::SkimFinder,
 };
+use std::io::Write;
+use std::path::PathBuf;
 
 type Result<T> = std::result::Result<T, TagrError>;
 
@@ -39,6 +41,7 @@ pub fn execute(
     preview_overrides: Option<PreviewOverrides>,
     path_format: config::PathFormat,
     quiet: bool,
+    output_file: Option<PathBuf>,
 ) -> Result<()> {
     // Handle filter loading
     if let Some(name) = filter_name {
@@ -122,22 +125,29 @@ pub fn execute(
     // Run browse workflow
     match controller.run() {
         Ok(Some(result)) => {
-            // Output results
-            if !quiet {
-                println!("=== Selected Tags ===");
-                for tag in &result.selected_tags {
-                    println!("  - {tag}");
+            if let Some(output_path) = output_file {
+                let mut file = std::fs::File::create(output_path)?;
+                for file_path in &result.selected_files {
+                    writeln!(file, "{}", file_path.to_string_lossy())?;
+                }
+            } else {
+                // Output results to stdout if no output file
+                if !quiet {
+                    println!("=== Selected Tags ===");
+                    for tag in &result.selected_tags {
+                        println!("  - {tag}");
+                    }
+
+                    println!("\n=== Selected Files ===");
                 }
 
-                println!("\n=== Selected Files ===");
-            }
-            
-            for file in &result.selected_files {
-                let formatted_path = output::format_path(file, path_format);
-                if quiet {
-                    println!("{formatted_path}");
-                } else {
-                    println!("  - {formatted_path}");
+                for file in &result.selected_files {
+                    let formatted_path = output::format_path(file, path_format);
+                    if quiet {
+                        println!("{formatted_path}");
+                    } else {
+                        println!("  - {formatted_path}");
+                    }
                 }
             }
 

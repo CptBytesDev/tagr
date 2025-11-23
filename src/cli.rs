@@ -531,6 +531,10 @@ pub enum Commands {
 
         #[command(flatten)]
         filter_args: FilterArgs,
+
+        /// Write selection to a file instead of stdout
+        #[arg(long = "output-file", value_name = "PATH")]
+        output_file: Option<PathBuf>,
     },
 
     /// Manage configuration settings
@@ -869,6 +873,7 @@ impl Cli {
                 save_filter: None,
                 filter_desc: None,
             },
+            output_file: None,
         })
     }
 
