@@ -1,4 +1,4 @@
-# tagr
+# tagr Manual
 
 A fast, interactive command-line tool for organizing files with tags using fuzzy finding and persistent storage.
 
@@ -35,6 +35,7 @@ When you run `tagr` for the first time, it will guide you through an interactive
 ```
 
 You'll be prompted for:
+
 - **Database name** (default: "default")
 - **Database location** (default: `~/.local/share/tagr/<database_name>`)
 
@@ -81,12 +82,14 @@ tagr browse
 ```
 
 **Stage 1: Tag Selection**
+
 - Displays all available tags in the database
 - **Multi-select enabled** via TAB key
 - Fuzzy matching for quick filtering
 - Press Enter to proceed to file selection
 
 **Stage 2: File Selection**
+
 - Shows all files matching ANY of the selected tags
 - Files displayed with their tags inline: `file.txt [tag1, tag2, tag3]`
 - **Multi-select enabled** via TAB key
@@ -115,6 +118,7 @@ tagr browse -t rust -f "src/*.rs" -e test
 ```
 
 This behaves exactly like `tagr search`, but instead of printing results directly, it opens the fuzzy finder pre-filtered with matching files. You can then:
+
 - Further filter with fuzzy matching
 - Multi-select files
 - Execute commands on selections
@@ -202,6 +206,7 @@ Trigger actions immediately while browsing without exiting the finder:
 | **ESC** | Cancel | Abort and exit browse mode |
 
 **Workflow Example:**
+
 1. Browse and select files with TAB
 2. Press **Ctrl+T** to add tags (e.g., "urgent")
 3. Continue browsing the same file list
@@ -222,7 +227,7 @@ delete_from_db = "ctrl-d"
 
 Future enhancements will add more actions (edit tags, open files, copy paths), better visual feedback, and help overlay.
 
-## Preview Pane
+### Preview Pane
 
 The preview pane displays file content when browsing files in interactive mode, helping you make informed selections without leaving the fuzzy finder.
 
@@ -295,6 +300,7 @@ cargo install bat
 ```
 
 Syntax highlighting can be disabled via:
+
 - Configuration: `syntax_highlighting = false` in config.toml
 - CLI flag: `--no-preview` when browsing
 - Compile-time: `cargo build --no-default-features` (removes syntect dependency)
@@ -472,6 +478,7 @@ done
 ### Performance
 
 All search operations are highly efficient:
+
 - **Tag lookups**: O(1) via reverse index
 - **Complex queries**: < 20ms for 10,000 files
 - **Pattern filtering**: Only on result set, not entire database
@@ -499,6 +506,7 @@ Save complex search criteria as named filters for quick recall, eliminating the 
 ### Why Use Filters?
 
 Filters are perfect for searches you run frequently:
+
 - Finding all Rust tutorial files: `tagr search -t rust -t tutorial -f "*.rs"`
 - Reviewing production code: `tagr search -t rust -t production -e deprecated -e test`
 - Checking documentation: `tagr search -t documentation -f "*.md" -f "*.txt" --any-file`
@@ -789,8 +797,8 @@ Virtual tags can be saved in filters for quick recall:
 
 ```bash
 # Save a filter with virtual tags
-tagr search -t rust -v ext:.rs -v "size:>1KB" \\
-  --save-filter "rust-source" \\
+tagr search -t rust -v ext:.rs -v "size:>1KB" \
+  --save-filter "rust-source" \
   --filter-desc "Non-empty Rust source files"
 
 # Use the saved filter
@@ -859,9 +867,13 @@ tagr cleanup
 ```
 
 For each problematic file, you can respond with:
+
 - `y` or `yes` - Delete this file from the database
+
 - `n` or `no` - Skip this file
+
 - `a` or `yes-to-all` - Delete this file and all remaining in this category
+
 - `q` or `no-to-all` - Skip this file and all remaining in this category
 
 ### Automated Cleanup
@@ -881,6 +893,7 @@ echo -e "a\nq" | tagr cleanup
 tagr uses **multiple sled trees** for efficient bidirectional lookups:
 
 #### Files Tree
+
 ```
 Key: file_path (UTF-8 string as bytes)
 Value: Vec<String> (bincode-encoded list of tags)
@@ -891,6 +904,7 @@ Example:
 ```
 
 #### Tags Tree (Reverse Index)
+
 ```
 Key: tag (UTF-8 string as bytes)
 Value: Vec<String> (bincode-encoded list of file paths)
@@ -909,6 +923,7 @@ Example:
 | `find_by_all_tags(...)` | O(n) - scan all files | O(k) - set intersection | **100x** |
 
 **Example**: For 10,000 files with 100 unique tags:
+
 - Old: 10,000 iterations per query (~50ms)
 - New: 1 iteration per query (~0.1ms) - **500x faster!**
 
@@ -920,11 +935,11 @@ src/
 ├── main.rs         # CLI application entry point
 ├── cli.rs          # Command line interface
 ├── config.rs       # Configuration management
-├── db/             # Database wrapper
+├── db/
 │   ├── mod.rs      # Database operations
 │   ├── types.rs    # Data types
 │   └── error.rs    # Error types
-└── search/         # Interactive fuzzy finding
+└── search/
     ├── mod.rs      # Browse functionality
     ├── browse.rs   # Browse implementation
     └── error.rs    # Error types
@@ -1094,6 +1109,7 @@ This project is licensed under the MIT License.
 Potential improvements:
 
 ### Saved Filters (In Progress - Foundation Complete)
+
 - [x] Filter storage infrastructure with `FilterManager`
 - [x] Filter CRUD operations (create, get, update, delete, rename, list)
 - [x] Export/import functionality with conflict resolution
